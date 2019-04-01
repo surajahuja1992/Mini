@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: Tiny
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: dell
+Implementation-Vendor-Id: com.tiny
+Build-Jdk: 1.8.0_191
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/Tiny
+Created-By: Maven Integration for Eclipse
+
