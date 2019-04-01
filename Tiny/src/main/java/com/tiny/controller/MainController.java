@@ -10,17 +10,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.tiny.DOA.DBUtils;
+import com.tiny.dto.CommonResponseDTO;
 import com.tiny.service.LogOfDevice;
 import com.tiny.serviceImpl.MailerServiceImpl;
 import com.tiny.serviceImpl.MainServiceImpl;
@@ -113,32 +113,39 @@ public class MainController {
 	}
 	
 
-	@RequestMapping(value = "/processForm", method = RequestMethod.POST,produces = "application/pdf")
-	public @ResponseBody ResponseEntity<byte[]> save(@ModelAttribute(value = "disClamerObject") Disclamer disClamerObject,HttpServletRequest request,HttpServletResponse reposnse) throws ClassNotFoundException, IOException,
-	InterruptedException {
-		byte[] documentBytes = null;
-		if(disClamerObject.getPriorities()!=null && "Y".equals(disClamerObject.getPriorities())) {
+	@RequestMapping(value = "/processForm", method = RequestMethod.POST,produces = "application/json")
+	public @ResponseBody CommonResponseDTO save(@RequestParam(value = "radioButtonName") String radioButtonName,
+			@RequestParam(value = "tinyURL") String tinyURL,
+			HttpServletRequest request,HttpServletResponse reposnse) throws ClassNotFoundException, IOException,
+			InterruptedException {
+		// byte[] documentBytes = null;
+		String documentBytes = null;
+		CommonResponseDTO responseDto = new CommonResponseDTO();
+		if (radioButtonName != null && "Y".equals(radioButtonName)) {
 			List<LogDTO> list = new ArrayList<LogDTO>();
 			try {
 				LogDTO dto = new LogDTO();
-				dto.setTinyURL(disClamerObject.getTinyURL());
+				dto.setTinyURL(tinyURL);
 				dto.setIpAddress(request.getRemoteAddr());
 				dto.setDeviceInfo(TinyUtils.populateRequestedDeviceDetails(request.getHeader("User-Agent")));
-				dto.setLongUrl(mainServiceImpl.getLongUrl(disClamerObject.getTinyURL()));
+				dto.setLongUrl(mainServiceImpl.getLongUrl(tinyURL));
 				mainServiceImpl.saveTraficLog(dto);
 				list.add(dto);
-				mainServiceImpl.writeTrafficLog(list, location);
+				mainServiceImpl.writeTrafficLog(list, location); 
+				Disclamer disClamerObject = new Disclamer(radioButtonName, tinyURL);
 				documentBytes = mainServiceImpl.showPdf(disClamerObject);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			return ResponseEntity.ok(documentBytes);
+			if (null != documentBytes) {
+				responseDto.setPdfString(documentBytes);
+				responseDto.setResultFlag(true);
+			}
+		} else {
+			responseDto.setResultFlag(false);
+			responseDto.setPdfString(documentBytes);
 		}
-		else {
-			return null;
-		}
-		
-	
+		return responseDto;
 	}
 	@RequestMapping(value="/decline" , method=RequestMethod.GET)
 	public ModelAndView declineUrl() {

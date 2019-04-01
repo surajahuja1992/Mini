@@ -1,12 +1,48 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript">
     function updateTiny() {
-    	//alert((location.pathname+location.search).substr(1).split("/")[0])
 		document.getElementById("tinyURLId").value = (location.pathname+location.search).substr(1).split("/")[0];
 	}
- </script>
+    $(document).ready(function(){
+    	$('input[type=radio][name=radioButtonName]').change(function() {
+    		$.ajax({
+    	        type: "POST",
+    	        contentType: "application/json",
+    	        url: "/processForm?radioButtonName="+this.value+"&tinyURL="+$("#tinyURLId").val(),
+    	        dataType: 'json',
+    	        cache: false,
+    	        success: function (data) {
+    	            if(data.resultFlag){
+    	            	var objbuilder = '';
+    	            	objbuilder += ('<object width="100%" height="100%" data="data:application/pdf;base64,');
+    	            	objbuilder += (data.pdfString);
+    	            	objbuilder += ('" type="application/pdf" class="internal">');
+    	            	objbuilder += ('<embed src="data:application/pdf;base64,');
+    	            	objbuilder += (data.pdfString);
+    	            	objbuilder += ('" type="application/pdf"  />');
+    	            	objbuilder += ('</object>');
+
+    	            	var title = "Your PDF";
+    	            	window.document.write('<html><title>'+ title +'</title><body style="margin-top: 0px; margin-left: 0px; margin-right: 0px; margin-bottom: 0px;">');
+    	            	window.document.write(objbuilder);
+    	            	window.document.write('</body></html>');
+    	            	layer = jQuery(window.document);
+    	            }else{
+						alert("Sorry, We can not load you pdf unless untill you accepts the terms & Conditions.");
+						//window.close();
+    	            }
+    	        },
+    	        error: function (e) {
+    	            console.log("ERROR : ", e);
+    	        }
+    	    });
+
+    	});
+    });
+</script>
 	<style>
 	body {
 		background-color: powderblue;
@@ -16,17 +52,18 @@
 </style>
 </head>
 <body onload="updateTiny()">
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 	<fieldset>
 	 <legend>DISCLAIMER</legend>
 	<p>
-		<b>Static Content Here</b>
+		<b>Terms & Conditions</b>
 	</p>
 	<form action="#" th:action="@{/processForm}" th:object="${Disclamer}"
 		method="post">
 		<input type="hidden" th:name="${'tinyURL'}" value="" id="tinyURLId" />
-		<input type="radio" th:name="${'priorities'}" value="Y" />Accept <br/>
-		<input type="radio" th:name="${'priorities'}" value="N" />Decline<br/><br/>
-		<button type="submit" class="btn btn-xs btn-primary margin10-right paddingNew" name="save">Proceed!</button>
+		<input type="radio" name="radioButtonName" value="Y" />Accept <br/>
+		<input type="radio" th:name="radioButtonName" value="N" />Decline<br/><br/>
+		<!-- <button type="submit" class="btn btn-xs btn-primary margin10-right paddingNew" name="save">Proceed!</button> -->
 	</form>
 	</fieldset>
 </body>

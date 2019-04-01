@@ -9,6 +9,10 @@ public class Disclamer {
 	 * public void setPriorities(Map<String, String> priorities) { this.priorities =
 	 * priorities; }
 	 */
+	public Disclamer(String priorities,String tinyURL) {
+		this.priorities = priorities;
+		this.tinyURL = tinyURL;
+	}
 	private String priorities;
 	private String tinyURL;
 	/**

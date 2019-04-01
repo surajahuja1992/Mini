@@ -153,24 +153,24 @@ public class MainServiceImpl extends DBConn implements MainService {
 		String pdf = matcher.group(1);
 		return pdf;
 	}
-	public byte[] showPdf(Disclamer disClamerObject) throws Exception {
+
+	public String showPdf(Disclamer disClamerObject) throws Exception {
 		String documentIndex;
-		Connection conn  = null; 
+		Connection conn = null;
 		try {
 			conn = dbConnection();
-			documentIndex =  callStmt.getDocumentIndex(disClamerObject.getTinyURL(),conn);
+			documentIndex = callStmt.getDocumentIndex(disClamerObject.getTinyURL(), conn);
 			String pdf = recieveDoc(documentIndex);
-			String base64String = pdf.replaceAll("\\s+","");
-			byte[] decodedBytes = Base64.getDecoder().decode(base64String);
-			//System.out.println("decoded bytes -->" + decodedBytes);
-			return decodedBytes;
-		}catch (Exception e) {
+			String base64String = pdf.replaceAll("\\s+", "");
+			// byte[] decodedBytes = Base64.getDecoder().decode(base64String);
+			return base64String;
+		} catch (Exception e) {
 			throw e;
-		}finally {
+		} finally {
 			DBConn.closeConncetion(conn, null, null);
 		}
-		
-		}
+
+	}
 	public String getLongUrl(String tinyUrl) throws Exception {
 		String longUrl=null;
 		Connection conn  = null; 
