@@ -7,7 +7,7 @@ public class Disclamer {
 	 * public Map<String, String> getPriorities() { return priorities; }
 	 * 
 	 * public void setPriorities(Map<String, String> priorities) { this.priorities =
-	 * priorities; }
+	 * priorities; } 
 	 */
 	public Disclamer(String priorities,String tinyURL) {
 		this.priorities = priorities;
