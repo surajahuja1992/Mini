@@ -141,7 +141,7 @@ public class MainController {
 				responseDto.setPdfString(documentBytes);
 				responseDto.setResultFlag(true);
 			}
-		} else {
+		} else { 
 			responseDto.setResultFlag(false);
 			responseDto.setPdfString(documentBytes);
 		}

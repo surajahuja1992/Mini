@@ -153,7 +153,7 @@ public class MainServiceImpl extends DBConn implements MainService {
 		String pdf = matcher.group(1);
 		return pdf;
 	}
-
+ 
 	public String showPdf(Disclamer disClamerObject) throws Exception {
 		String documentIndex;
 		Connection conn = null;
